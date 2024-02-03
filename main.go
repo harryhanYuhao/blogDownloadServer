@@ -14,6 +14,7 @@ import (
 )
 
 const fileDir = "/tmp/blogDownloadServer"
+const logFileDir = "/tmp/blogDownloadServer_log"
 const logFilePath = "/tmp/blogDownloadServer_log/log"
 const gitURL = "https://github.com/harryhanYuhao/blogPosts.git"
 
@@ -22,6 +23,7 @@ func formatedCurTime() string {
 }
 
 func log_writeLog(input string) {
+	execBash.Execute("mkdir -p " + logFileDir)
 	f, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
