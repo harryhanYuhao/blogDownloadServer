@@ -59,8 +59,9 @@ func handleSync(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	syncBlog()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/sync/", handleSync)
 	mux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(fileDir))))
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(":10001", mux))
 }
