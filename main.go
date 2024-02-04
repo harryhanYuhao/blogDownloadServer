@@ -67,6 +67,9 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Write([]byte("Error"))
 	}
+	for i := range list {
+		list[i] = list[i][len(fileDir):]
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(list)
