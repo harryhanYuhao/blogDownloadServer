@@ -3,6 +3,7 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,10 +12,11 @@ import (
 
 	"github.com/harryhanYuhao/blogDownloadServer/crypto"
 	"github.com/harryhanYuhao/blogDownloadServer/execBash"
+	"github.com/harryhanYuhao/blogDownloadServer/readDirRecurse"
 )
 
-const fileDir = "/tmp/blogDownloadServer"
-const logFileDir = "/tmp/blogDownloadServer_log"
+const fileDir = "/tmp/blogDownloadServer/"
+const logFileDir = "/tmp/blogDownloadServer_log/"
 const logFilePath = "/tmp/blogDownloadServer_log/log"
 const gitURL = "https://github.com/harryhanYuhao/blogPosts.git"
 
@@ -60,10 +62,22 @@ func handleSync(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleList(w http.ResponseWriter, r *http.Request) {
+	list, err := readDirRecurse.ReadDirRecurse(fileDir)
+	if err != nil {
+		w.Write([]byte("Error"))
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(list)
+
+}
+
 func main() {
 	syncBlog()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/sync/", handleSync)
+	mux.HandleFunc("/list/", handleList)
 	mux.Handle("/download/", http.StripPrefix("/download/", http.FileServer(http.Dir(fileDir))))
 	log.Fatal(http.ListenAndServe(":10001", mux))
 }
